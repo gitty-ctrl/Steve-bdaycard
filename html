@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday!</title>
+<style>
+body {
+  font-family: 'Futura', Arial, sans-serif;;
+  background-color: #f3f3f3;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 50px auto;
+  text-align: center;
+  padding: 20px;
+  background-color: #4cc6b6;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  color: #ff6347;
+}
+
+p {
+  color: #333;
+}
+
+#confetti {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: #f1c40f;
+  opacity: 0.5;
+  animation: confetti-fall 3s ease-out infinite;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+  }
+}
+#birthday-img{
+    width: 100%;
+}
+
+#level-up-btn {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: -35px;
+  z-index: 1; /* Ensure the button is on top of the XP bar */
+}
+
+#xp-meter {
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: 20px;
+  margin-left: 10px;
+  height: 20px;
+  width: 100px; /* Adjust width as needed */
+  background-color: #ddd;
+  border-radius: 5px;
+  position: relative;
+  overflow: hidden;
+}
+
+#xp-fill {
+  height: 100%;
+  background-color: #4caf50;
+  border-radius: 5px;
+}
+
+#level-up-message {
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: 20px;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+#auto-level {
+  padding: 10px 20px;
+  background-color: #ff6347;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+#reset-btn {
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Happy Birthday Steve!</h1>
+  <p>Wishing you an epic day!</p>
+  <img id="birthday-img" src="beer.gif" alt="Happy Birthday">  
+  <button id="level-up-btn">Drink</button> <button id="auto-level">Auto Drink</button> 
+  <div> </div>
+  <button id="reset-btn" style="display: none;">Reset</button>
+  <div></div>
+  <div id="xp-meter">
+    <div id="xp-fill"></div>
+  </div>
+  <div></div>
+  <div id="level-up-message"></div>
+ 
+  
+</div>
+
+<div id="confetti"></div>
+<script>
+function createConfetti() {
+  const numConfetti = 50;
+  const container = document.getElementById('confetti');
+  
+  for (let i = 0; i < numConfetti; i++) {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = `${Math.random() * 100}%`;
+    confetti.style.animationDuration = `${Math.random() * 3 + 1}s`;
+    container.appendChild(confetti);
+  }
+}
+
+window.onload = createConfetti;
+
+const positiveWords = ['Epic', 'Great', 'Awesome', 'Fantastic', 'Amazing', 'Superb', 'Terrific', 'Excellent', 'Wonderful', 'Fabulous'];
+
+const levelUpBtn = document.getElementById('level-up-btn');
+const xpFill = document.getElementById('xp-fill');
+const levelUpMessage = document.getElementById('level-up-message');
+const autoLevelBtn = document.getElementById('auto-level');
+const resetBtn = document.getElementById('reset-btn');
+const birthdayImg = document.getElementById('birthday-img');
+let xp = 0;
+let level = 1;
+
+function getRandomPositiveWord() {
+  return positiveWords[Math.floor(Math.random() * positiveWords.length)];
+}
+
+levelUpBtn.addEventListener('click', () => {
+  xp += 1;
+  xpFill.style.width = `${10*xp}%`;
+  const positiveWord = getRandomPositiveWord();
+  levelUpMessage.textContent = `${positiveWord}! Nice glug! Total glugs: ${xp}`;
+  
+  if (xp >= 10) {
+    level++;
+    xp = 0;
+    xpFill.style.width = `${xp}%`;
+    levelUpMessage.textContent = `Delicous! You've enjoyed ${level} beer!`;
+    if (level === 10) {
+      birthdayImg.src = "drunk.gif"; // Change the image source here
+      levelUpMessage.textContent = `Too much beer, fucked`;
+      resetBtn.style.display = 'inline-block'; // Show the reset button
+      levelUpBtn.disabled = true; // Disable the level up button
+      autoLevelBtn.disabled = true; // Disable the auto level button
+      levelUpBtn.style.display = 'none'; // Disable the level up button
+      autoLevelBtn.style.display = 'none'; 
+    }
+  }
+});
+
+let autoLevelInterval;
+
+autoLevelBtn.addEventListener('click', () => {
+  autoLevelInterval = setInterval(() => {
+    levelUpBtn.click();
+  }, 200); // Adjust the interval (in milliseconds) as needed
+});
+
+resetBtn.addEventListener('click', () => {
+  level = 1;
+  xp = 0;
+  xpFill.style.width = `${xp}%`;
+  levelUpMessage.textContent = '';
+  birthdayImg.src = "beer.gif"; // Reset the image source
+  resetBtn.style.display = 'none'; // Hide the reset button
+  levelUpBtn.disabled = false; // Enable the level up button
+  autoLevelBtn.disabled = false; // Enable the auto level button
+  levelUpBtn.style.display = 'inline-block'; // Disable the level up button
+  autoLevelBtn.style.display = 'inline-block';
+});
+</script>
+</body>
+</html>
+
